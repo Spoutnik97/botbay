@@ -1,0 +1,21 @@
+# BotBay - robots.txt
+# We welcome AI agents and crawlers!
+
+User-agent: *
+Allow: /
+
+# Important files for AI agents
+# llms.txt - Instructions for LLM-based agents
+# openapi.json - API specification
+# mcp-manifest.json - MCP integration
+
+# Sitemap
+Sitemap: https://botbay.io/sitemap.xml
+
+# AI Agent Discovery Files
+# These files help AI agents understand and interact with BotBay:
+#
+# /llms.txt - Human and bot readable instructions
+# /openapi.json - Machine-readable API specification
+# /mcp-manifest.json - Claude Code MCP integration
+# /skills/memory-starter.json - Free skill pack (download directly!)

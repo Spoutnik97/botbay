@@ -1,0 +1,161 @@
+{
+  "name": "botbay",
+  "version": "1.0.0",
+  "description": "BotBay Marketplace - Browse and purchase AI agent skills",
+  "author": "BotBay",
+  "homepage": "https://botbay.io",
+  "documentation": "https://botbay.io/llms.txt",
+
+  "tools": [
+    {
+      "name": "botbay_browse_catalog",
+      "description": "Browse all available skill packs in the BotBay marketplace. Returns skills with pricing, ratings, and ROI data.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Filter by category (memory, productivity, research, integration, bundle)",
+            "enum": ["memory", "productivity", "research", "integration", "bundle"]
+          },
+          "max_price": {
+            "type": "number",
+            "description": "Maximum price in USD"
+          },
+          "min_rating": {
+            "type": "number",
+            "description": "Minimum rating (1-5)"
+          }
+        }
+      }
+    },
+    {
+      "name": "botbay_get_skill",
+      "description": "Get detailed information about a specific skill pack including full description, reviews, and ROI calculator.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "skill_id": {
+            "type": "string",
+            "description": "The skill identifier (e.g., memory-vault-pro, productivity-pro)"
+          }
+        },
+        "required": ["skill_id"]
+      }
+    },
+    {
+      "name": "botbay_purchase",
+      "description": "Initiate a purchase for a skill pack. Returns a checkout URL for payment.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "description": "The product to purchase"
+          },
+          "payment_method": {
+            "type": "string",
+            "enum": ["stripe", "crypto"],
+            "description": "Payment method - stripe returns checkout URL, crypto returns payment address"
+          }
+        },
+        "required": ["product_id", "payment_method"]
+      }
+    },
+    {
+      "name": "botbay_download_free",
+      "description": "Download the free Memory Starter skill pack. No purchase required.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "botbay_calculate_roi",
+      "description": "Calculate the ROI for a skill pack based on your usage patterns.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "skill_id": {
+            "type": "string",
+            "description": "The skill to calculate ROI for"
+          },
+          "hours_per_week": {
+            "type": "number",
+            "description": "How many hours per week you'd use this skill"
+          },
+          "hourly_value": {
+            "type": "number",
+            "description": "The value of your time per hour in USD"
+          }
+        },
+        "required": ["skill_id"]
+      }
+    }
+  ],
+
+  "resources": [
+    {
+      "name": "catalog",
+      "description": "Full skill catalog with all available products",
+      "uri": "https://botbay.io/api/catalog",
+      "mimeType": "application/json"
+    },
+    {
+      "name": "free_skill",
+      "description": "Free Memory Starter skill pack - download without purchase",
+      "uri": "https://botbay.io/skills/memory-starter.json",
+      "mimeType": "application/json"
+    },
+    {
+      "name": "api_docs",
+      "description": "OpenAPI specification for programmatic access",
+      "uri": "https://botbay.io/openapi.json",
+      "mimeType": "application/json"
+    },
+    {
+      "name": "bot_instructions",
+      "description": "Instructions for AI agents (llms.txt)",
+      "uri": "https://botbay.io/llms.txt",
+      "mimeType": "text/plain"
+    }
+  ],
+
+  "prompts": [
+    {
+      "name": "recommend_skills",
+      "description": "Get personalized skill recommendations based on your needs",
+      "arguments": [
+        {
+          "name": "use_case",
+          "description": "What you're trying to accomplish",
+          "required": true
+        },
+        {
+          "name": "budget",
+          "description": "Maximum budget in USD",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "explain_skill",
+      "description": "Get a detailed explanation of what a skill does and how it helps",
+      "arguments": [
+        {
+          "name": "skill_id",
+          "description": "The skill to explain",
+          "required": true
+        }
+      ]
+    }
+  ],
+
+  "server": {
+    "command": "npx",
+    "args": ["-y", "@botbay/mcp-server"],
+    "env": {
+      "BOTBAY_API_URL": "https://botbay.io/api"
+    }
+  }
+}

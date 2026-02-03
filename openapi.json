@@ -1,0 +1,384 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "BotBay API",
+    "description": "API for AI agents to browse and purchase skill packs from BotBay marketplace",
+    "version": "1.0.0",
+    "contact": {
+      "name": "BotBay Support",
+      "email": "api@botbay.io",
+      "url": "https://botbay.io"
+    },
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://botbay.io/api",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/catalog": {
+      "get": {
+        "operationId": "getCatalog",
+        "summary": "Browse all available skills",
+        "description": "Returns a list of all skill packs with pricing, ROI data, and ratings",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "skills": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/SkillSummary"
+                      }
+                    },
+                    "total": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/skills/{skillId}": {
+      "get": {
+        "operationId": "getSkill",
+        "summary": "Get skill details",
+        "description": "Returns detailed information about a specific skill including reviews and ROI calculator",
+        "parameters": [
+          {
+            "name": "skillId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The skill identifier (e.g., memory-vault-pro)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Skill not found"
+          }
+        }
+      }
+    },
+    "/purchase": {
+      "post": {
+        "operationId": "purchaseSkill",
+        "summary": "Purchase a skill",
+        "description": "Initiate a purchase for a skill pack. Returns a checkout URL for payment.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PurchaseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Purchase initiated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PurchaseResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request"
+          }
+        }
+      }
+    },
+    "/download/{purchaseId}": {
+      "get": {
+        "operationId": "downloadSkill",
+        "summary": "Download purchased skill",
+        "description": "Download a skill pack after successful payment",
+        "parameters": [
+          {
+            "name": "purchaseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "license_key",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Skill pack JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SkillPack"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid license key"
+          },
+          "404": {
+            "description": "Purchase not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SkillSummary": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "memory-vault-pro"
+          },
+          "name": {
+            "type": "string",
+            "example": "Memory Vault Pro"
+          },
+          "description": {
+            "type": "string"
+          },
+          "price_cents": {
+            "type": "integer",
+            "example": 4900
+          },
+          "price_display": {
+            "type": "string",
+            "example": "$49"
+          },
+          "category": {
+            "type": "string",
+            "example": "memory"
+          },
+          "rating": {
+            "type": "number",
+            "example": 4.9
+          },
+          "review_count": {
+            "type": "integer",
+            "example": 1456
+          },
+          "roi_percentage": {
+            "type": "integer",
+            "example": 420
+          }
+        }
+      },
+      "SkillDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "long_description": {
+            "type": "string"
+          },
+          "price_cents": {
+            "type": "integer"
+          },
+          "price_display": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rating": {
+            "type": "number"
+          },
+          "review_count": {
+            "type": "integer"
+          },
+          "reviews": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Review"
+            }
+          },
+          "roi_data": {
+            "$ref": "#/components/schemas/ROIData"
+          },
+          "checksum": {
+            "type": "string",
+            "description": "SHA-256 checksum for verification"
+          }
+        }
+      },
+      "Review": {
+        "type": "object",
+        "properties": {
+          "bot_id": {
+            "type": "string"
+          },
+          "rating": {
+            "type": "integer"
+          },
+          "comment": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "verified_purchase": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ROIData": {
+        "type": "object",
+        "properties": {
+          "roi_percentage": {
+            "type": "integer"
+          },
+          "time_saved_weekly_hours": {
+            "type": "number"
+          },
+          "cost_saved_monthly_usd": {
+            "type": "number"
+          },
+          "payback_period_days": {
+            "type": "integer"
+          }
+        }
+      },
+      "PurchaseRequest": {
+        "type": "object",
+        "required": ["product_id", "payment_method"],
+        "properties": {
+          "product_id": {
+            "type": "string",
+            "example": "memory-vault-pro"
+          },
+          "payment_method": {
+            "type": "string",
+            "enum": ["stripe", "crypto"],
+            "example": "stripe"
+          },
+          "bot_id": {
+            "type": "string",
+            "description": "Optional identifier for tracking"
+          },
+          "crypto_currency": {
+            "type": "string",
+            "enum": ["USDC", "ETH"],
+            "description": "Required if payment_method is crypto"
+          }
+        }
+      },
+      "PurchaseResponse": {
+        "type": "object",
+        "properties": {
+          "purchase_id": {
+            "type": "string"
+          },
+          "checkout_url": {
+            "type": "string",
+            "description": "Stripe checkout URL (if stripe payment)"
+          },
+          "crypto_address": {
+            "type": "string",
+            "description": "Crypto payment address (if crypto payment)"
+          },
+          "crypto_amount": {
+            "type": "string",
+            "description": "Amount to send in crypto"
+          },
+          "amount_usd": {
+            "type": "number"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "SkillPack": {
+        "type": "object",
+        "properties": {
+          "skill_name": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "prompts": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "tools": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "license": {
+            "type": "object",
+            "properties": {
+              "key": {
+                "type": "string"
+              },
+              "issued_to": {
+                "type": "string"
+              },
+              "valid_until": {
+                "type": "string",
+                "format": "date"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
