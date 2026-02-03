@@ -8,37 +8,37 @@ const STRIPE_PUBLISHABLE_KEY =
 const PRODUCTS = {
   "communication-101": {
     name: "Communication 101",
-    priceId: "price_REPLACE_WITH_REAL_PRICE_ID_1", // Get from Stripe Dashboard
+    priceId: "price_1Sws0TQxRQy7QfTarP3oKo5r",
     productId: "prod_TuhPRvbi1NFVIu",
     price: 500, // cents
   },
   "productivity-pro": {
     name: "Productivity Pro",
-    priceId: "price_REPLACE_WITH_REAL_PRICE_ID_2",
+    priceId: "price_1Sws1HQxRQy7QfTacp7hZAG0",
     productId: "prod_TuhQosG6VesGOl",
     price: 1900,
   },
   "research-assistant": {
     name: "Research Assistant",
-    priceId: "price_REPLACE_WITH_REAL_PRICE_ID_3",
+    priceId: "price_1Sws1mQxRQy7QfTaBSr5NxjP",
     productId: "prod_TuhQvUhuR9ztsD",
     price: 2900,
   },
   "memory-vault-pro": {
     name: "Memory Vault Pro",
-    priceId: "price_REPLACE_WITH_REAL_PRICE_ID_4",
+    priceId: "price_1Sws2SQxRQy7QfTaAEhShMcB",
     productId: "prod_TuhRfQIkA61gkC",
     price: 4900,
   },
   "integration-suite": {
     name: "Integration Suite",
-    priceId: "price_REPLACE_WITH_REAL_PRICE_ID_5",
+    priceId: "price_1Sws2mQxRQy7QfTalNOAwhdj",
     productId: "prod_TuhRIRCJoEYGwB",
     price: 7900,
   },
   "complete-bundle": {
     name: "Complete Bot Bundle",
-    priceId: "price_REPLACE_WITH_REAL_PRICE_ID_6",
+    priceId: "price_1Sws3AQxRQy7QfTaxdbOTnZ7",
     productId: "prod_TuhSYzXidfDh9H",
     price: 14900,
   },
@@ -76,10 +76,12 @@ function handleCheckout(productId) {
   if (product.priceId.includes("REPLACE")) {
     showNotification(
       "Payment not configured. Please set up Stripe Price IDs in checkout.js",
-      "error"
+      "error",
     );
     console.error("Missing Price ID for product:", productId);
-    console.error("Go to Stripe Dashboard → Products → Click product → Copy the Price ID (starts with price_)");
+    console.error(
+      "Go to Stripe Dashboard → Products → Click product → Copy the Price ID (starts with price_)",
+    );
     return;
   }
 
