@@ -2,6 +2,16 @@
 const STRIPE_PUBLISHABLE_KEY =
   "pk_live_51Swrk5QxRQy7QfTaj7pk9L17rpOV2fvJltSNQPXEu08h2e4c52LQvj1CJV1nNd9XiRtcb9pCytW5IBE1i8brsQdE00kiJKaiOj";
 
+// Vercel Analytics helper
+function trackEvent(eventName, properties = {}) {
+  if (window.va) {
+    window.va("event", {
+      name: eventName,
+      data: properties,
+    });
+  }
+}
+
 // Product configuration with Stripe Price IDs
 // IMPORTANT: These must be PRICE IDs (price_xxx), not Product IDs (prod_xxx)
 // Get these from: Stripe Dashboard → Products → Click product → Copy Price ID
@@ -63,8 +73,19 @@ function handleCheckout(productId) {
   if (!product) {
     console.error("Unknown product:", productId);
     showNotification("Product not found", "error");
+    trackEvent("checkout_error", {
+      productId,
+      error: "Product not found",
+    });
     return;
   }
+
+  // Track checkout initiation
+  trackEvent("checkout_initiated", {
+    productId,
+    productName: product.name,
+    price: product.price / 100,
+  });
 
   // If Stripe is not configured, show demo mode
   if (!stripe) {
@@ -105,12 +126,27 @@ function handleCheckout(productId) {
     .then(function (result) {
       if (result.error) {
         showNotification(result.error.message, "error");
+        trackEvent("checkout_error", {
+          productId,
+          productName: product.name,
+          error: result.error.message,
+        });
+      } else {
+        trackEvent("checkout_redirect", {
+          productId,
+          productName: product.name,
+        });
       }
     });
 }
 
 // Demo checkout for when Stripe is not configured
 function showDemoCheckout(product) {
+  trackEvent("demo_checkout_shown", {
+    productName: product.name,
+    price: product.price / 100,
+  });
+
   const priceFormatted = (product.price / 100).toFixed(2);
 
   // Create modal overlay
@@ -262,11 +298,13 @@ function showDemoCheckout(product) {
 function closeCheckoutModal() {
   const overlay = document.querySelector(".checkout-overlay");
   if (overlay) {
+    trackEvent("checkout_modal_closed");
     overlay.remove();
   }
 }
 
 function simulatePurchase(productName) {
+  trackEvent("demo_purchase_simulated", { productName });
   closeCheckoutModal();
   showNotification(
     `Purchase simulated for ${productName}! In production, you would receive a download link.`,
@@ -369,6 +407,14 @@ function initROICalculator() {
     const costPer1K = parseFloat(costSlider.value);
     const tokensPerQuery = parseInt(tokensSlider.value);
     const retryRate = parseFloat(retriesSlider.value);
+
+    // Track ROI calculator usage
+    trackEvent("roi_calculator_used", {
+      queries,
+      costPer1K,
+      tokensPerQuery,
+      retryRate,
+    });
 
     // Update display values
     document.getElementById("queries-value").textContent =
@@ -513,7 +559,23 @@ document.addEventListener("DOMContentLoaded", function () {
   document.querySelectorAll("button[data-product]").forEach((button) => {
     button.addEventListener("click", function () {
       const productId = this.getAttribute("data-product");
+      trackEvent("buy_button_clicked", { productId });
       handleCheckout(productId);
+    });
+  });
+
+  // Track page view
+  trackEvent("page_view", {
+    page: window.location.pathname,
+    referrer: document.referrer,
+  });
+
+  // Track free skill downloads
+  document.querySelectorAll("a[download]").forEach((link) => {
+    link.addEventListener("click", function () {
+      const skillName =
+        this.getAttribute("download") || this.href.split("/").pop();
+      trackEvent("free_skill_download", { skillName });
     });
   });
 });

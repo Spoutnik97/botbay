@@ -8,6 +8,7 @@
     "start": "npx serve ."
   },
   "dependencies": {
+    "@vercel/analytics": "^1.6.1",
     "stripe": "^14.0.0"
   }
 }
