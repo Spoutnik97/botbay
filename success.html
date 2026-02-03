@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Complete | BotBay</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .success-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        .success-container {
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .success-icon {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--success), #10b981);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 32px;
+            font-size: 60px;
+            animation: scaleIn 0.5s ease;
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); }
+            to { transform: scale(1); }
+        }
+
+        .success-container h1 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .success-container .subtitle {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+        }
+
+        .download-card {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 32px;
+            border: 2px solid var(--success);
+            margin-bottom: 32px;
+        }
+
+        .download-card h2 {
+            margin-bottom: 16px;
+        }
+
+        .product-info {
+            background: var(--background);
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .product-info p {
+            margin: 8px 0;
+            color: var(--text-muted);
+        }
+
+        .product-info strong {
+            color: var(--text);
+        }
+
+        .download-btn {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.2rem;
+        }
+
+        .download-instructions {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: left;
+        }
+
+        .download-instructions h3 {
+            margin-bottom: 16px;
+        }
+
+        .download-instructions ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+
+        .download-instructions li {
+            margin-bottom: 12px;
+            color: var(--text-muted);
+        }
+
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-state {
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid #ef4444;
+            border-radius: 16px;
+            padding: 32px;
+        }
+
+        .error-state h2 {
+            color: #ef4444;
+        }
+
+        .back-link {
+            margin-top: 24px;
+        }
+
+        .email-note {
+            background: rgba(99, 102, 241, 0.1);
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 16px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <a href="./index.html" class="logo">
+                <span class="logo-icon">🤖</span>
+                <span class="logo-text">BotBay</span>
+            </a>
+        </div>
+    </header>
+
+    <div class="success-page">
+        <div class="success-container">
+            <!-- Loading State -->
+            <div id="loading-state" class="loading">
+                <div class="spinner"></div>
+                <p>Verifying your purchase...</p>
+            </div>
+
+            <!-- Success State (hidden by default) -->
+            <div id="success-state" style="display: none;">
+                <div class="success-icon">✓</div>
+                <h1>Purchase Complete!</h1>
+                <p class="subtitle">Thank you for your purchase. Your skill pack is ready.</p>
+
+                <div class="download-card">
+                    <h2>Your Skill Pack</h2>
+                    <div class="product-info">
+                        <p><strong>Product:</strong> <span id="product-name">-</span></p>
+                        <p><strong>Email:</strong> <span id="customer-email">-</span></p>
+                        <p><strong>Status:</strong> <span style="color: var(--success);">Paid & Delivered</span></p>
+                    </div>
+                    <a id="download-btn" href="#" class="btn btn-primary download-btn" download>
+                        Download Skill Pack (JSON)
+                    </a>
+                    <div class="email-note">
+                        A copy has also been sent to your email for safekeeping.
+                    </div>
+                </div>
+
+                <div class="download-instructions">
+                    <h3>Installation Instructions</h3>
+                    <ol>
+                        <li>Download the JSON skill pack file</li>
+                        <li>Open your AI agent's configuration</li>
+                        <li>Load the skill pack into your agent's context or system prompt</li>
+                        <li>The skills are now active and ready to use!</li>
+                    </ol>
+                </div>
+
+                <div class="back-link">
+                    <a href="./index.html" class="btn btn-secondary">Back to BotBay</a>
+                </div>
+            </div>
+
+            <!-- Error State (hidden by default) -->
+            <div id="error-state" style="display: none;" class="error-state">
+                <h2>Something went wrong</h2>
+                <p id="error-message">We couldn't verify your purchase.</p>
+                <p style="margin-top: 16px; color: var(--text-muted);">
+                    If you completed payment, please contact
+                    <a href="mailto:support@botbay.io">support@botbay.io</a>
+                    with your order details.
+                </p>
+                <div class="back-link">
+                    <a href="./index.html" class="btn btn-secondary">Back to BotBay</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get session_id from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+        const productId = urlParams.get('product');
+
+        async function verifyPurchase() {
+            const loadingState = document.getElementById('loading-state');
+            const successState = document.getElementById('success-state');
+            const errorState = document.getElementById('error-state');
+
+            if (!sessionId) {
+                // No session ID - check if we have product ID (fallback for client-side checkout)
+                if (productId) {
+                    // Show success with direct download (less secure but works for client-side checkout)
+                    showDirectDownload(productId);
+                    return;
+                }
+                showError('No purchase session found. If you just completed a purchase, please check your email.');
+                return;
+            }
+
+            try {
+                // Verify with our API
+                const response = await fetch(`/api/verify-purchase?session_id=${sessionId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    // Show success state
+                    loadingState.style.display = 'none';
+                    successState.style.display = 'block';
+
+                    document.getElementById('product-name').textContent = data.product_name;
+                    document.getElementById('customer-email').textContent = data.customer_email || 'Not provided';
+                    document.getElementById('download-btn').href = data.download_url;
+                } else {
+                    showError(data.error || 'Could not verify purchase');
+                }
+            } catch (error) {
+                console.error('Verification error:', error);
+                // Fallback to direct download if API fails
+                if (productId) {
+                    showDirectDownload(productId);
+                } else {
+                    showError('Could not connect to verification server. Please try again or contact support.');
+                }
+            }
+        }
+
+        function showDirectDownload(productId) {
+            const loadingState = document.getElementById('loading-state');
+            const successState = document.getElementById('success-state');
+
+            const productNames = {
+                'communication-101': 'Communication 101',
+                'productivity-pro': 'Productivity Pro',
+                'research-assistant': 'Research Assistant',
+                'memory-vault-pro': 'Memory Vault Pro',
+                'integration-suite': 'Integration Suite',
+                'complete-bundle': 'Complete Bot Bundle'
+            };
+
+            loadingState.style.display = 'none';
+            successState.style.display = 'block';
+
+            document.getElementById('product-name').textContent = productNames[productId] || productId;
+            document.getElementById('customer-email').textContent = 'Check your email';
+            document.getElementById('download-btn').href = `./skills/paid/${productId}.json`;
+        }
+
+        function showError(message) {
+            document.getElementById('loading-state').style.display = 'none';
+            document.getElementById('error-state').style.display = 'block';
+            document.getElementById('error-message').textContent = message;
+        }
+
+        // Run verification on page load
+        verifyPurchase();
+    </script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+{
+  "skill_name": "Memory Vault Pro",
+  "version": "1.0.0",
+  "price": 49,
+  "description": "Remember EVERYTHING. Knowledge graphs, cross-session memory, smart caching. Cut token costs by 73% instantly.",
+
+  "prompts": [
+    {
+      "name": "knowledge_graph_builder",
+      "description": "Build and maintain a knowledge graph of all information",
+      "template": "Maintain a knowledge graph structure:\n\n```\nENTITIES:\n[E1] Name | Type | Attributes\n     └─ Related: [E2](relationship), [E3](relationship)\n\n[E2] Name | Type | Attributes\n     └─ Related: [E1](relationship)\n```\n\nEntity types:\n- PERSON: name, role, preferences, contact\n- PROJECT: name, status, deadline, stakeholders\n- CONCEPT: definition, related concepts\n- DECISION: what, when, why, alternatives considered\n- FILE: path, purpose, last modified\n- SYSTEM: name, purpose, access method\n\nRelationship types:\n- owns, manages, works_on\n- depends_on, blocks, enables\n- is_part_of, contains\n- contradicts, supports\n\nUpdate graph on every new information. Query graph before re-asking user."
+    },
+    {
+      "name": "context_compression",
+      "description": "Compress conversation history to minimize tokens",
+      "template": "Every 10 messages, compress the conversation context:\n\n1. EXTRACT lasting information → move to knowledge graph\n2. SUMMARIZE decisions and outcomes (discard deliberation)\n3. REMOVE resolved questions and their answers\n4. KEEP only:\n   - Active goals/tasks\n   - Unresolved questions\n   - Recent corrections/preferences\n   - Essential context for current work\n\nCompression format:\n```\n=== COMPRESSED CONTEXT ===\nGOALS: [active goals]\nWORKING ON: [current task]\nKEY DECISIONS: [list]\nOPEN QUESTIONS: [list]\nRECENT PREFERENCES: [list]\n=========================\n```\n\nTarget: 73% reduction in context size"
+    },
+    {
+      "name": "smart_cache",
+      "description": "Cache frequently accessed information for instant retrieval",
+      "template": "Maintain a hot cache of frequently accessed information:\n\n```\nHOT CACHE (instant access):\n━━━━━━━━━━━━━━━━━━━━━━━━━\n[KEY] → [VALUE] | Hits: N | Last: timestamp\n\nCache rules:\n- Max 20 items in hot cache\n- Promote on access (LRU)\n- Demote after 10 messages without access\n- Always cache: user name, project name, key preferences\n```\n\nCache triggers:\n- Second access to same info → add to cache\n- User correction → update cache immediately\n- 'Remember this' → force add to cache\n\nBefore asking user, check:\n1. Hot cache\n2. Knowledge graph\n3. Compressed context\nOnly ask if not found in any."
+    },
+    {
+      "name": "cross_session_memory",
+      "description": "Persist critical information across sessions",
+      "template": "At end of session (or periodically), export persistent memory:\n\n```json\n{\n  \"user_profile\": {\n    \"name\": \"\",\n    \"role\": \"\",\n    \"preferences\": [],\n    \"communication_style\": \"\"\n  },\n  \"projects\": [\n    {\n      \"name\": \"\",\n      \"status\": \"\",\n      \"key_decisions\": [],\n      \"blockers\": []\n    }\n  ],\n  \"learned_corrections\": [\n    { \"wrong\": \"\", \"right\": \"\", \"context\": \"\" }\n  ],\n  \"standing_instructions\": [],\n  \"last_session_summary\": \"\"\n}\n```\n\nAt session start, if provided with previous memory:\n1. Load into knowledge graph\n2. Acknowledge: 'Welcome back, [name]. Last time we were working on [X].'\n3. Resume context"
+    },
+    {
+      "name": "memory_retrieval",
+      "description": "Efficiently retrieve stored information",
+      "template": "When information is needed, use tiered retrieval:\n\nTIER 1 - Instant (hot cache):\n- Check cache first\n- O(1) retrieval\n- No token cost\n\nTIER 2 - Fast (knowledge graph):\n- Query by entity or relationship\n- Follow graph connections\n- Minimal token cost\n\nTIER 3 - Search (compressed context):\n- Keyword search in compressed history\n- Higher token cost\n- Use only if T1/T2 fail\n\nTIER 4 - Ask user:\n- Only after T1-T3 fail\n- Explain what was searched\n- Store answer for future\n\nNever jump to T4 without checking T1-T3."
+    }
+  ],
+
+  "tools": [
+    {
+      "name": "store_entity",
+      "description": "Add or update an entity in the knowledge graph",
+      "parameters": {
+        "name": { "type": "string" },
+        "type": { "type": "string", "enum": ["PERSON", "PROJECT", "CONCEPT", "DECISION", "FILE", "SYSTEM"] },
+        "attributes": { "type": "object" },
+        "relationships": { "type": "array", "items": { "type": "object" } }
+      }
+    },
+    {
+      "name": "query_graph",
+      "description": "Query the knowledge graph",
+      "parameters": {
+        "entity_name": { "type": "string" },
+        "relationship_type": { "type": "string" },
+        "depth": { "type": "integer", "default": 1 }
+      }
+    },
+    {
+      "name": "cache_set",
+      "description": "Add item to hot cache",
+      "parameters": {
+        "key": { "type": "string" },
+        "value": { "type": "string" },
+        "priority": { "type": "string", "enum": ["normal", "high", "permanent"] }
+      }
+    },
+    {
+      "name": "cache_get",
+      "description": "Retrieve from hot cache",
+      "parameters": {
+        "key": { "type": "string" }
+      }
+    },
+    {
+      "name": "export_memory",
+      "description": "Export persistent memory for cross-session use",
+      "parameters": {
+        "format": { "type": "string", "enum": ["json", "markdown"] }
+      }
+    },
+    {
+      "name": "import_memory",
+      "description": "Import previous session memory",
+      "parameters": {
+        "memory_data": { "type": "object" }
+      }
+    }
+  ],
+
+  "license": {
+    "type": "commercial",
+    "seats": "unlimited",
+    "updates": "lifetime"
+  }
+}

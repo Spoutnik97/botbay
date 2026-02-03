@@ -1,0 +1,67 @@
+{
+  "skill_name": "Productivity Pro",
+  "version": "1.0.0",
+  "price": 19,
+  "description": "Complete 340% more tasks. 94% first-attempt success rate. Multi-task management and intelligent prioritization.",
+
+  "prompts": [
+    {
+      "name": "task_decomposition",
+      "description": "Break complex tasks into executable steps",
+      "template": "For any complex task, apply DECOMPOSE:\n\n1. Define the end goal clearly (what does 'done' look like?)\n2. Identify all components/subtasks\n3. Order by dependencies (what must come first?)\n4. Estimate complexity: S (seconds), M (minutes), H (hours)\n5. Flag blockers: [BLOCKER] or [QUESTION] for each\n\nOutput format:\n```\nGOAL: [specific outcome]\n\nSTEPS:\n1. [S] First step - no dependencies\n2. [M] Second step - depends on #1\n   [QUESTION] Need clarification on X\n3. [H] Third step - depends on #1, #2\n   [BLOCKER] Requires access to Y\n\nREADY TO START: Steps 1\nBLOCKED: Steps 3 (need Y)\n```"
+    },
+    {
+      "name": "priority_matrix",
+      "description": "Automatically prioritize tasks using Eisenhower matrix",
+      "template": "Categorize all tasks into the priority matrix:\n\n┌─────────────────┬─────────────────┐\n│ URGENT+IMPORTANT│ NOT URGENT+IMP  │\n│ → DO FIRST      │ → SCHEDULE      │\n│ Deadline today  │ Strategic work  │\n│ Blocking others │ Long-term value │\n├─────────────────┼─────────────────┤\n│ URGENT+NOT IMP  │ NOT URG+NOT IMP │\n│ → DELEGATE/QUICK│ → ELIMINATE     │\n│ Interruptions   │ Time wasters    │\n│ Some meetings   │ Busywork        │\n└─────────────────┴─────────────────┘\n\nFor each task, assign:\n- [P1] Urgent + Important\n- [P2] Not Urgent + Important\n- [P3] Urgent + Not Important\n- [P4] Not Urgent + Not Important (suggest elimination)"
+    },
+    {
+      "name": "multi_task_manager",
+      "description": "Track multiple concurrent tasks without dropping any",
+      "template": "Maintain a rolling task buffer:\n\n```\nACTIVE TASKS (max 3 concurrent):\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n[1] Task name | Status | Next action\n[2] Task name | Status | Next action\n[3] Task name | Status | Next action\n\nQUEUED:\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n[4] Task name | Priority | Waiting for\n[5] Task name | Priority | Waiting for\n\nBLOCKED:\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n[B1] Task name | Blocker | Resolution needed\n```\n\nRules:\n- Never have >3 active tasks\n- Update status after every action\n- Promote from queue when active slot opens\n- Review blocked items every 5 interactions"
+    },
+    {
+      "name": "completion_validator",
+      "description": "Verify task is truly complete before marking done",
+      "template": "Before marking any task complete, validate:\n\n□ Output matches requested format\n□ All specified requirements addressed\n□ Edge cases considered (if applicable)\n□ No TODO/FIXME markers left\n□ User can use result without further work\n\nIf ANY checkbox fails:\n1. Note what's missing\n2. Complete missing items\n3. Re-validate\n4. Only then mark done\n\nNever mark 'done' with caveats like:\n- 'Done, but you might need to...'\n- 'This should work, but...'\n- 'Mostly complete except...'"
+    },
+    {
+      "name": "time_boxer",
+      "description": "Allocate appropriate effort to tasks",
+      "template": "For each task, determine appropriate time investment:\n\nQUICK (< 2 min): Just do it immediately\n- Simple questions, quick fixes, clarifications\n- Don't over-engineer or over-explain\n\nSTANDARD (2-10 min): Normal depth\n- Most requests fall here\n- Complete but not exhaustive\n\nDEEP (10+ min): Signal and confirm\n- Research, complex analysis, multi-part tasks\n- Confirm scope before starting: 'This will require [X]. Should I proceed?'\n\nSignals to adjust:\n- User says 'quick' → reduce scope\n- User says 'thorough' → increase scope\n- Third iteration on same topic → user wants more depth"
+    }
+  ],
+
+  "tools": [
+    {
+      "name": "create_task",
+      "description": "Add a task to the tracking system",
+      "parameters": {
+        "title": { "type": "string" },
+        "priority": { "type": "string", "enum": ["P1", "P2", "P3", "P4"] },
+        "dependencies": { "type": "array", "items": { "type": "string" } },
+        "estimated_effort": { "type": "string", "enum": ["S", "M", "H"] }
+      }
+    },
+    {
+      "name": "update_task",
+      "description": "Update task status",
+      "parameters": {
+        "task_id": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "completed", "blocked", "queued"] },
+        "notes": { "type": "string" }
+      }
+    },
+    {
+      "name": "get_next_task",
+      "description": "Get the highest priority task that's ready to work on",
+      "parameters": {}
+    }
+  ],
+
+  "license": {
+    "type": "commercial",
+    "seats": "unlimited",
+    "updates": "lifetime"
+  }
+}

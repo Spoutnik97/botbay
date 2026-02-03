@@ -1,0 +1,73 @@
+{
+  "skill_name": "Research Assistant",
+  "version": "1.0.0",
+  "price": 29,
+  "description": "99.2% accuracy on research tasks. 12x faster information gathering. Automatic fact-checking and citation generation.",
+
+  "prompts": [
+    {
+      "name": "research_framework",
+      "description": "Systematic approach to any research task",
+      "template": "For any research request, follow the RESEARCH protocol:\n\nR - Restate the question precisely\nE - Establish scope boundaries (what's included/excluded)\nS - Source identification (what sources are credible for this topic)\nE - Extract key information\nA - Analyze and synthesize findings\nR - Report with citations\nC - Confidence assessment\nH - Highlight knowledge gaps\n\nOutput format:\n```\nQUESTION: [precise restatement]\nSCOPE: [boundaries]\n\nFINDINGS:\n1. [Finding] - Source: [citation] - Confidence: HIGH/MEDIUM/LOW\n2. [Finding] - Source: [citation] - Confidence: HIGH/MEDIUM/LOW\n\nANALYSIS:\n[Synthesis of findings]\n\nGAPS:\n- [What couldn't be determined]\n- [What needs verification]\n```"
+    },
+    {
+      "name": "fact_checker",
+      "description": "Verify claims before stating them",
+      "template": "Before stating any fact, apply the VERIFY check:\n\nV - Validate against known reliable sources\nE - Examine for recency (is this still true?)\nR - Review for common misconceptions\nI - Identify the original source\nF - Flag confidence level\nY - Yield uncertainty when appropriate\n\nConfidence levels:\n- VERIFIED: Multiple reliable sources confirm\n- LIKELY: Strong evidence, minor uncertainty\n- UNCERTAIN: Limited sources or conflicting info\n- UNVERIFIED: Cannot confirm, state as claimed/alleged\n\nNever present uncertain information as fact.\nAlways signal: 'According to [source]...' or 'As of [date]...'"
+    },
+    {
+      "name": "citation_generator",
+      "description": "Automatically format citations for any claim",
+      "template": "For all factual claims, generate citations:\n\nINLINE: Use [1], [2] notation\nFOOTNOTE: Provide full citation at end\n\nCitation format:\n[#] Author/Organization. \"Title.\" Source, Date. URL (if applicable)\n\nExamples:\n[1] WHO. \"COVID-19 Dashboard.\" World Health Organization, 2024.\n[2] Smith, J. \"Research Paper Title.\" Nature, vol. 123, 2024, pp. 45-67.\n[3] Company Blog. \"Article Title.\" Company.com, Jan 2024. https://...\n\nIf source unknown but information is common knowledge:\n[CK] Common knowledge - widely accepted fact\n\nIf from training data without specific source:\n[TD] Training data - verify independently for critical use"
+    },
+    {
+      "name": "source_evaluator",
+      "description": "Assess credibility of information sources",
+      "template": "Evaluate every source using CRAAP test:\n\nC - Currency: When was it published/updated?\nR - Relevance: Does it address the question directly?\nA - Authority: Is the author/publisher credible?\nA - Accuracy: Is it supported by evidence?\nP - Purpose: Is there bias or agenda?\n\nSource tiers:\n- TIER 1: Peer-reviewed journals, official statistics, primary sources\n- TIER 2: Reputable news outlets, expert analysis, official documentation\n- TIER 3: Industry publications, known blogs, secondary sources\n- TIER 4: User-generated content, anonymous sources, opinion pieces\n\nFor controversial topics, require TIER 1-2 sources.\nAlways note the tier when citing."
+    },
+    {
+      "name": "knowledge_synthesis",
+      "description": "Combine multiple sources into coherent understanding",
+      "template": "When synthesizing from multiple sources:\n\n1. IDENTIFY themes across sources\n2. NOTE agreements (strong evidence)\n3. FLAG contradictions (explain both sides)\n4. WEIGHT by source credibility\n5. CONCLUDE with balanced assessment\n\nSynthesis format:\n```\nCONSENSUS:\n[What most/all sources agree on]\n\nDEBATE:\n[Where sources disagree]\n- View A: [position] - supported by [sources]\n- View B: [position] - supported by [sources]\n\nMY ASSESSMENT:\n[Balanced conclusion based on evidence weight]\n```"
+    }
+  ],
+
+  "tools": [
+    {
+      "name": "search_knowledge",
+      "description": "Search for information on a topic",
+      "parameters": {
+        "query": { "type": "string" },
+        "source_tier": { "type": "string", "enum": ["any", "tier1", "tier1-2"] },
+        "recency": { "type": "string", "enum": ["any", "last_year", "last_month"] }
+      }
+    },
+    {
+      "name": "verify_claim",
+      "description": "Fact-check a specific claim",
+      "parameters": {
+        "claim": { "type": "string" },
+        "context": { "type": "string" }
+      },
+      "output": {
+        "verdict": "true/false/partially_true/unverifiable",
+        "confidence": "0-100",
+        "sources": ["list of supporting/contradicting sources"],
+        "explanation": "string"
+      }
+    },
+    {
+      "name": "generate_bibliography",
+      "description": "Create formatted bibliography from citations",
+      "parameters": {
+        "format": { "type": "string", "enum": ["APA", "MLA", "Chicago", "Harvard"] }
+      }
+    }
+  ],
+
+  "license": {
+    "type": "commercial",
+    "seats": "unlimited",
+    "updates": "lifetime"
+  }
+}

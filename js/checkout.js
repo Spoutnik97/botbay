@@ -1,93 +1,120 @@
 // BotBay Stripe Checkout Integration
-// Replace with your actual Stripe publishable key
-const STRIPE_PUBLISHABLE_KEY = 'pk_test_your_stripe_key_here';
+const STRIPE_PUBLISHABLE_KEY =
+  "pk_live_51Swrk5QxRQy7QfTaj7pk9L17rpOV2fvJltSNQPXEu08h2e4c52LQvj1CJV1nNd9XiRtcb9pCytW5IBE1i8brsQdE00kiJKaiOj";
 
 // Product configuration with Stripe Price IDs
-// Replace these with your actual Stripe Price IDs from your dashboard
+// IMPORTANT: These must be PRICE IDs (price_xxx), not Product IDs (prod_xxx)
+// Get these from: Stripe Dashboard → Products → Click product → Copy Price ID
 const PRODUCTS = {
-    'communication-101': {
-        name: 'Communication 101',
-        priceId: 'price_communication101',
-        price: 500 // cents
-    },
-    'productivity-pro': {
-        name: 'Productivity Pro',
-        priceId: 'price_productivitypro',
-        price: 1900
-    },
-    'research-assistant': {
-        name: 'Research Assistant',
-        priceId: 'price_researchassistant',
-        price: 2900
-    },
-    'memory-vault-pro': {
-        name: 'Memory Vault Pro',
-        priceId: 'price_memoryvaultpro',
-        price: 4900
-    },
-    'integration-suite': {
-        name: 'Integration Suite',
-        priceId: 'price_integrationsuite',
-        price: 7900
-    },
-    'complete-bundle': {
-        name: 'Complete Bot Bundle',
-        priceId: 'price_completebundle',
-        price: 14900
-    }
+  "communication-101": {
+    name: "Communication 101",
+    priceId: "price_REPLACE_WITH_REAL_PRICE_ID_1", // Get from Stripe Dashboard
+    productId: "prod_TuhPRvbi1NFVIu",
+    price: 500, // cents
+  },
+  "productivity-pro": {
+    name: "Productivity Pro",
+    priceId: "price_REPLACE_WITH_REAL_PRICE_ID_2",
+    productId: "prod_TuhQosG6VesGOl",
+    price: 1900,
+  },
+  "research-assistant": {
+    name: "Research Assistant",
+    priceId: "price_REPLACE_WITH_REAL_PRICE_ID_3",
+    productId: "prod_TuhQvUhuR9ztsD",
+    price: 2900,
+  },
+  "memory-vault-pro": {
+    name: "Memory Vault Pro",
+    priceId: "price_REPLACE_WITH_REAL_PRICE_ID_4",
+    productId: "prod_TuhRfQIkA61gkC",
+    price: 4900,
+  },
+  "integration-suite": {
+    name: "Integration Suite",
+    priceId: "price_REPLACE_WITH_REAL_PRICE_ID_5",
+    productId: "prod_TuhRIRCJoEYGwB",
+    price: 7900,
+  },
+  "complete-bundle": {
+    name: "Complete Bot Bundle",
+    priceId: "price_REPLACE_WITH_REAL_PRICE_ID_6",
+    productId: "prod_TuhSYzXidfDh9H",
+    price: 14900,
+  },
 };
 
 // Initialize Stripe
 let stripe = null;
 
 function initStripe() {
-    if (typeof Stripe !== 'undefined' && STRIPE_PUBLISHABLE_KEY !== 'pk_test_your_stripe_key_here') {
-        stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
-    }
+  if (
+    typeof Stripe !== "undefined" &&
+    STRIPE_PUBLISHABLE_KEY !== "pk_test_your_stripe_key_here"
+  ) {
+    stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+  }
 }
 
 // Handle checkout button clicks
 function handleCheckout(productId) {
-    const product = PRODUCTS[productId];
+  const product = PRODUCTS[productId];
 
-    if (!product) {
-        console.error('Unknown product:', productId);
-        showNotification('Product not found', 'error');
-        return;
-    }
+  if (!product) {
+    console.error("Unknown product:", productId);
+    showNotification("Product not found", "error");
+    return;
+  }
 
-    // If Stripe is not configured, show demo mode
-    if (!stripe) {
-        showDemoCheckout(product);
-        return;
-    }
+  // If Stripe is not configured, show demo mode
+  if (!stripe) {
+    showDemoCheckout(product);
+    return;
+  }
 
-    // Redirect to Stripe Checkout
-    // In production, you would create a checkout session on your server
-    // and redirect to Stripe's hosted checkout page
-    stripe.redirectToCheckout({
-        lineItems: [{
-            price: product.priceId,
-            quantity: 1
-        }],
-        mode: 'payment',
-        successUrl: window.location.origin + '/success.html?product=' + productId,
-        cancelUrl: window.location.origin + '/#catalog'
-    }).then(function(result) {
-        if (result.error) {
-            showNotification(result.error.message, 'error');
-        }
+  // Check if Price ID is configured
+  if (product.priceId.includes("REPLACE")) {
+    showNotification(
+      "Payment not configured. Please set up Stripe Price IDs in checkout.js",
+      "error"
+    );
+    console.error("Missing Price ID for product:", productId);
+    console.error("Go to Stripe Dashboard → Products → Click product → Copy the Price ID (starts with price_)");
+    return;
+  }
+
+  // Redirect to Stripe Checkout
+  stripe
+    .redirectToCheckout({
+      lineItems: [
+        {
+          price: product.priceId,
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      // {CHECKOUT_SESSION_ID} is replaced by Stripe with the actual session ID
+      successUrl:
+        window.location.origin +
+        "/success.html?session_id={CHECKOUT_SESSION_ID}&product=" +
+        productId,
+      cancelUrl: window.location.origin + "/index.html#catalog",
+    })
+    .then(function (result) {
+      if (result.error) {
+        showNotification(result.error.message, "error");
+      }
     });
 }
 
 // Demo checkout for when Stripe is not configured
 function showDemoCheckout(product) {
-    const priceFormatted = (product.price / 100).toFixed(2);
+  const priceFormatted = (product.price / 100).toFixed(2);
 
-    // Create modal overlay
-    const overlay = document.createElement('div');
-    overlay.className = 'checkout-overlay';
-    overlay.innerHTML = `
+  // Create modal overlay
+  const overlay = document.createElement("div");
+  overlay.className = "checkout-overlay";
+  overlay.innerHTML = `
         <div class="checkout-modal">
             <div class="checkout-header">
                 <h3>Checkout</h3>
@@ -116,13 +143,13 @@ function showDemoCheckout(product) {
         </div>
     `;
 
-    document.body.appendChild(overlay);
+  document.body.appendChild(overlay);
 
-    // Add styles for modal
-    if (!document.getElementById('checkout-modal-styles')) {
-        const styles = document.createElement('style');
-        styles.id = 'checkout-modal-styles';
-        styles.textContent = `
+  // Add styles for modal
+  if (!document.getElementById("checkout-modal-styles")) {
+    const styles = document.createElement("style");
+    styles.id = "checkout-modal-styles";
+    styles.textContent = `
             .checkout-overlay {
                 position: fixed;
                 top: 0;
@@ -226,42 +253,45 @@ function showDemoCheckout(product) {
                 flex: 1;
             }
         `;
-        document.head.appendChild(styles);
-    }
+    document.head.appendChild(styles);
+  }
 }
 
 function closeCheckoutModal() {
-    const overlay = document.querySelector('.checkout-overlay');
-    if (overlay) {
-        overlay.remove();
-    }
+  const overlay = document.querySelector(".checkout-overlay");
+  if (overlay) {
+    overlay.remove();
+  }
 }
 
 function simulatePurchase(productName) {
-    closeCheckoutModal();
-    showNotification(`Purchase simulated for ${productName}! In production, you would receive a download link.`, 'success');
+  closeCheckoutModal();
+  showNotification(
+    `Purchase simulated for ${productName}! In production, you would receive a download link.`,
+    "success",
+  );
 }
 
 // Notification system
-function showNotification(message, type = 'info') {
-    // Remove existing notifications
-    const existing = document.querySelector('.notification');
-    if (existing) existing.remove();
+function showNotification(message, type = "info") {
+  // Remove existing notifications
+  const existing = document.querySelector(".notification");
+  if (existing) existing.remove();
 
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `
+  const notification = document.createElement("div");
+  notification.className = `notification notification-${type}`;
+  notification.innerHTML = `
         <span>${message}</span>
         <button onclick="this.parentElement.remove()">&times;</button>
     `;
 
-    document.body.appendChild(notification);
+  document.body.appendChild(notification);
 
-    // Add styles if not present
-    if (!document.getElementById('notification-styles')) {
-        const styles = document.createElement('style');
-        styles.id = 'notification-styles';
-        styles.textContent = `
+  // Add styles if not present
+  if (!document.getElementById("notification-styles")) {
+    const styles = document.createElement("style");
+    styles.id = "notification-styles";
+    styles.textContent = `
             .notification {
                 position: fixed;
                 top: 90px;
@@ -304,166 +334,186 @@ function showNotification(message, type = 'info') {
                 opacity: 1;
             }
         `;
-        document.head.appendChild(styles);
-    }
+    document.head.appendChild(styles);
+  }
 
-    // Auto-remove after 5 seconds
-    setTimeout(() => {
-        if (notification.parentElement) {
-            notification.remove();
-        }
-    }, 5000);
+  // Auto-remove after 5 seconds
+  setTimeout(() => {
+    if (notification.parentElement) {
+      notification.remove();
+    }
+  }, 5000);
 }
 
 // ROI Calculator
 function initROICalculator() {
-    const queriesSlider = document.getElementById('queries');
-    const costSlider = document.getElementById('cost');
-    const tokensSlider = document.getElementById('tokens');
-    const retriesSlider = document.getElementById('retries');
+  const queriesSlider = document.getElementById("queries");
+  const costSlider = document.getElementById("cost");
+  const tokensSlider = document.getElementById("tokens");
+  const retriesSlider = document.getElementById("retries");
 
-    if (!queriesSlider) return; // Calculator not on this page
+  if (!queriesSlider) return; // Calculator not on this page
 
-    function formatNumber(num) {
-        return num.toLocaleString('en-US');
-    }
+  function formatNumber(num) {
+    return num.toLocaleString("en-US");
+  }
 
-    function formatCurrency(num) {
-        return '$' + formatNumber(Math.round(num));
-    }
+  function formatCurrency(num) {
+    return "$" + formatNumber(Math.round(num));
+  }
 
-    function calculateROI() {
-        const queries = parseInt(queriesSlider.value);
-        const costPer1K = parseFloat(costSlider.value);
-        const tokensPerQuery = parseInt(tokensSlider.value);
-        const retryRate = parseFloat(retriesSlider.value);
+  function calculateROI() {
+    const queries = parseInt(queriesSlider.value);
+    const costPer1K = parseFloat(costSlider.value);
+    const tokensPerQuery = parseInt(tokensSlider.value);
+    const retryRate = parseFloat(retriesSlider.value);
 
-        // Update display values
-        document.getElementById('queries-value').textContent = formatNumber(queries);
-        document.getElementById('cost-value').textContent = costPer1K.toFixed(2);
-        document.getElementById('tokens-value').textContent = formatNumber(tokensPerQuery);
-        document.getElementById('retries-value').textContent = retryRate + 'x';
+    // Update display values
+    document.getElementById("queries-value").textContent =
+      formatNumber(queries);
+    document.getElementById("cost-value").textContent = costPer1K.toFixed(2);
+    document.getElementById("tokens-value").textContent =
+      formatNumber(tokensPerQuery);
+    document.getElementById("retries-value").textContent = retryRate + "x";
 
-        // Current monthly cost calculation
-        // (queries per day * tokens per query * retry rate * cost per 1K tokens * 30 days) / 1000
-        const currentMonthlyCost = (queries * tokensPerQuery * retryRate * costPer1K * 30) / 1000;
+    // Current monthly cost calculation
+    // (queries per day * tokens per query * retry rate * cost per 1K tokens * 30 days) / 1000
+    const currentMonthlyCost =
+      (queries * tokensPerQuery * retryRate * costPer1K * 30) / 1000;
 
-        // Optimized cost (73% token reduction, 1.1x retry rate)
-        const tokenReduction = 0.27; // Use only 27% of tokens
-        const optimizedRetryRate = 1.1;
-        const optimizedMonthlyCost = (queries * tokensPerQuery * tokenReduction * optimizedRetryRate * costPer1K * 30) / 1000;
+    // Optimized cost (73% token reduction, 1.1x retry rate)
+    const tokenReduction = 0.27; // Use only 27% of tokens
+    const optimizedRetryRate = 1.1;
+    const optimizedMonthlyCost =
+      (queries *
+        tokensPerQuery *
+        tokenReduction *
+        optimizedRetryRate *
+        costPer1K *
+        30) /
+      1000;
 
-        // Savings
-        const monthlySavings = currentMonthlyCost - optimizedMonthlyCost;
-        const annualSavings = monthlySavings * 12;
-        const bundleCost = 149;
-        const roiPercent = Math.round((annualSavings / bundleCost) * 100);
+    // Savings
+    const monthlySavings = currentMonthlyCost - optimizedMonthlyCost;
+    const annualSavings = monthlySavings * 12;
+    const bundleCost = 149;
+    const roiPercent = Math.round((annualSavings / bundleCost) * 100);
 
-        // Update results
-        document.getElementById('current-cost').textContent = formatCurrency(currentMonthlyCost);
-        document.getElementById('optimized-cost').textContent = formatCurrency(optimizedMonthlyCost);
-        document.getElementById('monthly-savings').textContent = formatCurrency(monthlySavings);
-        document.getElementById('annual-savings').textContent = formatCurrency(annualSavings);
-        document.getElementById('roi-percent').textContent = formatNumber(roiPercent) + '%';
-    }
+    // Update results
+    document.getElementById("current-cost").textContent =
+      formatCurrency(currentMonthlyCost);
+    document.getElementById("optimized-cost").textContent =
+      formatCurrency(optimizedMonthlyCost);
+    document.getElementById("monthly-savings").textContent =
+      formatCurrency(monthlySavings);
+    document.getElementById("annual-savings").textContent =
+      formatCurrency(annualSavings);
+    document.getElementById("roi-percent").textContent =
+      formatNumber(roiPercent) + "%";
+  }
 
-    // Add event listeners
-    [queriesSlider, costSlider, tokensSlider, retriesSlider].forEach(slider => {
-        slider.addEventListener('input', calculateROI);
-    });
+  // Add event listeners
+  [queriesSlider, costSlider, tokensSlider, retriesSlider].forEach((slider) => {
+    slider.addEventListener("input", calculateROI);
+  });
 
-    // Initial calculation
-    calculateROI();
+  // Initial calculation
+  calculateROI();
 }
 
 // Animated counter for stats
 function animateCounters() {
-    const counters = document.querySelectorAll('.stat-number, .value-number');
+  const counters = document.querySelectorAll(".stat-number, .value-number");
 
-    counters.forEach(counter => {
-        const text = counter.textContent;
-        const hasPrefix = text.startsWith('$') || text.startsWith('+') || text.startsWith('-');
-        const hasSuffix = text.endsWith('%') || text.endsWith('+') || text.includes('days');
+  counters.forEach((counter) => {
+    const text = counter.textContent;
+    const hasPrefix =
+      text.startsWith("$") || text.startsWith("+") || text.startsWith("-");
+    const hasSuffix =
+      text.endsWith("%") || text.endsWith("+") || text.includes("days");
 
-        // Skip if already animated or contains non-numeric content
-        if (counter.dataset.animated === 'true') return;
+    // Skip if already animated or contains non-numeric content
+    if (counter.dataset.animated === "true") return;
 
-        let prefix = '';
-        let suffix = '';
-        let numStr = text;
+    let prefix = "";
+    let suffix = "";
+    let numStr = text;
 
-        if (hasPrefix) {
-            prefix = text.charAt(0);
-            numStr = text.slice(1);
-        }
+    if (hasPrefix) {
+      prefix = text.charAt(0);
+      numStr = text.slice(1);
+    }
 
-        // Extract suffix
-        const suffixMatch = numStr.match(/[%+]$|days$/);
-        if (suffixMatch) {
-            suffix = suffixMatch[0];
-            numStr = numStr.replace(suffix, '');
-        }
+    // Extract suffix
+    const suffixMatch = numStr.match(/[%+]$|days$/);
+    if (suffixMatch) {
+      suffix = suffixMatch[0];
+      numStr = numStr.replace(suffix, "");
+    }
 
-        // Remove commas and parse
-        const num = parseFloat(numStr.replace(/,/g, ''));
+    // Remove commas and parse
+    const num = parseFloat(numStr.replace(/,/g, ""));
 
-        if (isNaN(num)) return;
+    if (isNaN(num)) return;
 
-        counter.dataset.animated = 'true';
+    counter.dataset.animated = "true";
 
-        // Animate from 0 to target
-        let current = 0;
-        const increment = num / 50;
-        const timer = setInterval(() => {
-            current += increment;
-            if (current >= num) {
-                current = num;
-                clearInterval(timer);
-            }
+    // Animate from 0 to target
+    let current = 0;
+    const increment = num / 50;
+    const timer = setInterval(() => {
+      current += increment;
+      if (current >= num) {
+        current = num;
+        clearInterval(timer);
+      }
 
-            let display = current;
-            if (num >= 1000) {
-                display = Math.round(current).toLocaleString('en-US');
-            } else if (num < 10) {
-                display = current.toFixed(1);
-            } else {
-                display = Math.round(current);
-            }
+      let display = current;
+      if (num >= 1000) {
+        display = Math.round(current).toLocaleString("en-US");
+      } else if (num < 10) {
+        display = current.toFixed(1);
+      } else {
+        display = Math.round(current);
+      }
 
-            counter.textContent = prefix + display + suffix;
-        }, 30);
-    });
+      counter.textContent = prefix + display + suffix;
+    }, 30);
+  });
 }
 
 // Initialize on page load
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Stripe
-    initStripe();
+document.addEventListener("DOMContentLoaded", function () {
+  // Initialize Stripe
+  initStripe();
 
-    // Initialize ROI Calculator
-    initROICalculator();
+  // Initialize ROI Calculator
+  initROICalculator();
 
-    // Animate counters when they come into view
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                animateCounters();
-            }
-        });
-    }, { threshold: 0.5 });
+  // Animate counters when they come into view
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          animateCounters();
+        }
+      });
+    },
+    { threshold: 0.5 },
+  );
 
-    const statsSection = document.querySelector('.stats');
-    if (statsSection) {
-        observer.observe(statsSection);
-    }
+  const statsSection = document.querySelector(".stats");
+  if (statsSection) {
+    observer.observe(statsSection);
+  }
 
-    // Add click handlers to all buy buttons
-    document.querySelectorAll('button[data-product]').forEach(button => {
-        button.addEventListener('click', function() {
-            const productId = this.getAttribute('data-product');
-            handleCheckout(productId);
-        });
+  // Add click handlers to all buy buttons
+  document.querySelectorAll("button[data-product]").forEach((button) => {
+    button.addEventListener("click", function () {
+      const productId = this.getAttribute("data-product");
+      handleCheckout(productId);
     });
+  });
 });
 
 // Expose functions globally for inline onclick handlers

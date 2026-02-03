@@ -10,7 +10,7 @@ Allow: /
 # mcp-manifest.json - MCP integration
 
 # Sitemap
-Sitemap: https://botbay.io/sitemap.xml
+Sitemap: https://botbay.vercel.app/sitemap.xml
 
 # AI Agent Discovery Files
 # These files help AI agents understand and interact with BotBay:

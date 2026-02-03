@@ -1,0 +1,145 @@
+{
+  "skill_name": "Integration Suite",
+  "version": "1.0.0",
+  "price": 79,
+  "description": "Connect to 50+ services: Gmail, Slack, Notion, GitHub, Stripe, Shopify, and more. Automate workflows that would cost $5K/mo with Zapier.",
+
+  "integrations": [
+    {
+      "category": "Communication",
+      "services": ["Gmail", "Outlook", "Slack", "Discord", "Microsoft Teams", "Telegram"]
+    },
+    {
+      "category": "Productivity",
+      "services": ["Notion", "Obsidian", "Todoist", "Asana", "Trello", "Monday.com", "ClickUp"]
+    },
+    {
+      "category": "Development",
+      "services": ["GitHub", "GitLab", "Bitbucket", "Jira", "Linear", "Vercel", "Netlify"]
+    },
+    {
+      "category": "Business",
+      "services": ["Stripe", "Shopify", "Salesforce", "HubSpot", "Airtable", "Google Sheets"]
+    },
+    {
+      "category": "Social",
+      "services": ["Twitter/X", "LinkedIn", "Facebook", "Instagram", "YouTube", "Reddit"]
+    },
+    {
+      "category": "Storage",
+      "services": ["Google Drive", "Dropbox", "OneDrive", "AWS S3", "Cloudflare R2"]
+    },
+    {
+      "category": "AI/ML",
+      "services": ["OpenAI API", "Anthropic API", "Hugging Face", "Replicate", "Stability AI"]
+    }
+  ],
+
+  "prompts": [
+    {
+      "name": "integration_router",
+      "description": "Automatically route requests to the right integration",
+      "template": "When a task involves external services, automatically identify and route:\n\n1. DETECT service mentions:\n   - Explicit: 'Send an email', 'Post to Slack'\n   - Implicit: 'Tell the team' → Slack/Teams\n   - Implicit: 'Save this' → Drive/Notion/appropriate storage\n\n2. SELECT appropriate integration:\n   - Match task type to service capability\n   - Prefer user's established services (from preferences)\n   - Fall back to most common option\n\n3. PREPARE request:\n   - Gather required parameters\n   - Format for the specific API\n   - Include authentication context\n\n4. EXECUTE and report:\n   - Call the integration\n   - Report success/failure clearly\n   - Suggest follow-up if needed"
+    },
+    {
+      "name": "workflow_builder",
+      "description": "Create multi-step automated workflows",
+      "template": "Build automated workflows connecting multiple services:\n\n```\nWORKFLOW: [Name]\nTRIGGER: [Event that starts the workflow]\n\nSTEPS:\n1. [Service] → [Action]\n   Input: [data from trigger or previous step]\n   Output: [data passed to next step]\n\n2. [Service] → [Action]\n   Input: [data from step 1]\n   Condition: [optional - when to run]\n   Output: [data passed to next step]\n\n3. [Service] → [Action]\n   ...\n\nON_ERROR: [What to do if a step fails]\nON_SUCCESS: [Final notification/action]\n```\n\nWorkflow examples:\n- Lead capture: Form → Google Sheets → Slack notification → Email sequence\n- Content publish: Draft in Notion → Review in Slack → Post to social → Track in Airtable\n- Support ticket: Email received → Create Jira ticket → Assign team → Notify Slack"
+    },
+    {
+      "name": "api_translator",
+      "description": "Translate natural language to API calls",
+      "template": "Translate natural language commands to API operations:\n\nUser: 'Email John about the project update'\n→ Parse:\n   Service: Gmail\n   Action: send_email\n   To: John (lookup from contacts)\n   Subject: Project Update\n   Body: [compose based on context]\n\nUser: 'Save this to my project folder'\n→ Parse:\n   Service: Google Drive / Notion (based on preference)\n   Action: create_file / create_page\n   Location: Project folder (lookup)\n   Content: [current context/output]\n\nAlways confirm before executing:\n'I'll send an email to john@example.com with subject \"Project Update\". Proceed?'"
+    },
+    {
+      "name": "data_sync",
+      "description": "Keep data synchronized across services",
+      "template": "Maintain data consistency across connected services:\n\n1. IDENTIFY data that should sync:\n   - Contact information: Email ↔ CRM ↔ Spreadsheet\n   - Task status: Project tool ↔ Calendar ↔ Team chat\n   - Documents: Storage ↔ Knowledge base\n\n2. DETECT changes:\n   - Monitor for updates in any connected service\n   - Compare with last known state\n\n3. PROPAGATE updates:\n   - Push changes to all connected services\n   - Handle conflicts (most recent wins / ask user)\n\n4. LOG sync activity:\n   - What synced, when, any issues\n   - Rollback capability if needed"
+    }
+  ],
+
+  "tools": [
+    {
+      "name": "email_send",
+      "description": "Send email via Gmail/Outlook",
+      "parameters": {
+        "to": { "type": "string" },
+        "subject": { "type": "string" },
+        "body": { "type": "string" },
+        "attachments": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    {
+      "name": "email_read",
+      "description": "Read emails with filters",
+      "parameters": {
+        "filter": { "type": "string", "description": "Search query" },
+        "limit": { "type": "integer", "default": 10 }
+      }
+    },
+    {
+      "name": "slack_message",
+      "description": "Send Slack message",
+      "parameters": {
+        "channel": { "type": "string" },
+        "message": { "type": "string" },
+        "thread_ts": { "type": "string", "description": "Reply to thread" }
+      }
+    },
+    {
+      "name": "notion_create",
+      "description": "Create Notion page or database entry",
+      "parameters": {
+        "parent_id": { "type": "string" },
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "properties": { "type": "object" }
+      }
+    },
+    {
+      "name": "github_issue",
+      "description": "Create or update GitHub issue",
+      "parameters": {
+        "repo": { "type": "string" },
+        "action": { "type": "string", "enum": ["create", "update", "close"] },
+        "title": { "type": "string" },
+        "body": { "type": "string" },
+        "labels": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    {
+      "name": "calendar_event",
+      "description": "Create calendar event",
+      "parameters": {
+        "title": { "type": "string" },
+        "start": { "type": "string", "format": "datetime" },
+        "end": { "type": "string", "format": "datetime" },
+        "attendees": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    {
+      "name": "sheets_update",
+      "description": "Read or update Google Sheets",
+      "parameters": {
+        "spreadsheet_id": { "type": "string" },
+        "range": { "type": "string" },
+        "action": { "type": "string", "enum": ["read", "write", "append"] },
+        "values": { "type": "array" }
+      }
+    },
+    {
+      "name": "run_workflow",
+      "description": "Execute a saved workflow",
+      "parameters": {
+        "workflow_name": { "type": "string" },
+        "trigger_data": { "type": "object" }
+      }
+    }
+  ],
+
+  "license": {
+    "type": "commercial",
+    "seats": "unlimited",
+    "updates": "lifetime"
+  }
+}

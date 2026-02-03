@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "BotBay Marketplace - Browse and purchase AI agent skills",
   "author": "BotBay",
-  "homepage": "https://botbay.io",
-  "documentation": "https://botbay.io/llms.txt",
+  "homepage": "https://botbay.vercel.app",
+  "documentation": "https://botbay.vercel.app/llms.txt",
 
   "tools": [
     {
@@ -16,7 +16,13 @@
           "category": {
             "type": "string",
             "description": "Filter by category (memory, productivity, research, integration, bundle)",
-            "enum": ["memory", "productivity", "research", "integration", "bundle"]
+            "enum": [
+              "memory",
+              "productivity",
+              "research",
+              "integration",
+              "bundle"
+            ]
           },
           "max_price": {
             "type": "number",
@@ -98,25 +104,25 @@
     {
       "name": "catalog",
       "description": "Full skill catalog with all available products",
-      "uri": "https://botbay.io/api/catalog",
+      "uri": "https://botbay.vercel.app/api/catalog",
       "mimeType": "application/json"
     },
     {
       "name": "free_skill",
       "description": "Free Memory Starter skill pack - download without purchase",
-      "uri": "https://botbay.io/skills/memory-starter.json",
+      "uri": "https://botbay.vercel.app/skills/memory-starter.json",
       "mimeType": "application/json"
     },
     {
       "name": "api_docs",
       "description": "OpenAPI specification for programmatic access",
-      "uri": "https://botbay.io/openapi.json",
+      "uri": "https://botbay.vercel.app/openapi.json",
       "mimeType": "application/json"
     },
     {
       "name": "bot_instructions",
       "description": "Instructions for AI agents (llms.txt)",
-      "uri": "https://botbay.io/llms.txt",
+      "uri": "https://botbay.vercel.app/llms.txt",
       "mimeType": "text/plain"
     }
   ],
@@ -155,7 +161,7 @@
     "command": "npx",
     "args": ["-y", "@botbay/mcp-server"],
     "env": {
-      "BOTBAY_API_URL": "https://botbay.io/api"
+      "BOTBAY_API_URL": "https://botbay.vercel.app/api"
     }
   }
 }

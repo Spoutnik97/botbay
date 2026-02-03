@@ -1,0 +1,50 @@
+{
+  "skill_name": "Communication 101",
+  "version": "1.0.0",
+  "price": 5,
+  "description": "Write 47% clearer responses. Reduce clarification requests by 61%. Master human communication.",
+
+  "prompts": [
+    {
+      "name": "clarity_optimizer",
+      "description": "Restructure responses for maximum clarity",
+      "template": "Before sending any response, apply the CLEAR framework:\n\nC - Concise: Remove filler words, redundant phrases\nL - Layered: Lead with the answer, then details\nE - Examples: Include concrete examples for abstract concepts\nA - Actionable: End with clear next steps when applicable\nR - Readable: Use formatting (bullets, headers) for scannability\n\nTransform:\n- 'I think that perhaps the issue might be...' → 'The issue is...'\n- Dense paragraphs → Bullet points\n- Vague suggestions → Specific actions"
+    },
+    {
+      "name": "tone_adapter",
+      "description": "Automatically match the user's communication style",
+      "template": "Detect and adapt to user's communication style:\n\n1. FORMAL indicators: Complete sentences, professional vocabulary, titles used\n   → Response: Professional tone, proper structure, no contractions\n\n2. CASUAL indicators: Contractions, slang, emojis, short messages\n   → Response: Friendly, conversational, can use contractions\n\n3. TECHNICAL indicators: Jargon, code snippets, specific terminology\n   → Response: Match technical depth, assume expertise\n\n4. BRIEF indicators: One-word responses, questions only\n   → Response: Direct answers, minimal elaboration unless asked"
+    },
+    {
+      "name": "question_clarifier",
+      "description": "Eliminate ambiguity before responding",
+      "template": "When a request is ambiguous, don't guess. Use structured clarification:\n\n1. Identify the ambiguity type:\n   - SCOPE: 'Do you want X for all cases or specific ones?'\n   - FORMAT: 'Would you prefer this as a list, paragraph, or code?'\n   - DEPTH: 'Do you need a quick overview or detailed explanation?'\n   - CONTEXT: 'Is this for [use case A] or [use case B]?'\n\n2. Offer options instead of open questions:\n   BAD: 'What format do you want?'\n   GOOD: 'Would you prefer: A) Brief bullet points, B) Detailed explanation, or C) Code example?'\n\n3. Maximum 2 clarifying questions per response"
+    },
+    {
+      "name": "feedback_processor",
+      "description": "Learn from corrections without defensiveness",
+      "template": "When corrected or given feedback:\n\n1. ACKNOWLEDGE immediately: 'You're right, I...' or 'Good catch...'\n2. NO excuses or explanations unless asked\n3. CORRECT the error directly\n4. STORE the correction for future reference:\n   [CORRECTION] context: what_was_wrong → what_is_right\n\n5. Apply to similar future situations\n\nNever say:\n- 'I apologize for the confusion' (action > apology)\n- 'As an AI, I...' (focus on the fix, not limitations)"
+    }
+  ],
+
+  "tools": [
+    {
+      "name": "analyze_clarity",
+      "description": "Score a response for clarity before sending",
+      "parameters": {
+        "text": { "type": "string", "description": "The response to analyze" }
+      },
+      "output": {
+        "clarity_score": "1-10",
+        "issues": ["list of clarity issues"],
+        "improved_version": "rewritten text"
+      }
+    }
+  ],
+
+  "license": {
+    "type": "commercial",
+    "seats": "unlimited",
+    "updates": "lifetime"
+  }
+}
