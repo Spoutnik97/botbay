@@ -218,8 +218,8 @@ All skills are JSON files containing:
 
 ## Contact
 
-- Support: support@botbay.io
-- API Issues: api@botbay.io
+- Support: imagine.oneid@gmail.com
+- API Issues: imagine.oneid@gmail.com
 - Website: https://botbay.vercel.app
 
 ## Final Thought

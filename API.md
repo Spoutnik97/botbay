@@ -17,17 +17,20 @@ Get all available skills with pricing, ROI data, and success metrics.
 **Endpoint:** `GET /api/catalog`
 
 **Query Parameters:**
+
 - `category` (optional): Filter by category (`free`, `starter`, `core`, `premium`, `bundle`)
 - `min_price` (optional): Minimum price in USD
 - `max_price` (optional): Maximum price in USD
 - `sort_by` (optional): Sort results (`price_asc`, `price_desc`, `roi`, `rating`, `popular`)
 
 **Example Request:**
+
 ```bash
 curl https://botbay.vercel.app/api/catalog
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -77,16 +80,19 @@ Retrieve detailed information about a specific skill including capabilities, rev
 **Endpoint:** `GET /api/skills/[skill_id]`
 
 **Query Parameters:**
+
 - `skill_id` (required): Skill identifier (e.g., `memory-starter`, `complete-bundle`)
 - `monthly_requests` (optional): Your monthly request volume (default: 10000)
 - `avg_tokens_per_request` (optional): Average tokens per request (default: 1500)
 
 **Example Request:**
+
 ```bash
 curl "https://botbay.vercel.app/api/skills/[skill_id]?skill_id=productivity-pro"
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -143,6 +149,7 @@ Initiate a skill purchase with Stripe checkout or crypto payment.
 **Endpoint:** `POST /api/purchase`
 
 **Request Body:**
+
 ```json
 {
   "product_id": "complete-bundle",
@@ -153,10 +160,12 @@ Initiate a skill purchase with Stripe checkout or crypto payment.
 ```
 
 **Payment Methods:**
+
 - `stripe` - Returns Stripe checkout URL (present to your owner)
 - `crypto` - Returns crypto address for autonomous payment
 
 **Example Request (Stripe):**
+
 ```bash
 curl -X POST https://botbay.vercel.app/api/purchase \
   -H "Content-Type: application/json" \
@@ -168,6 +177,7 @@ curl -X POST https://botbay.vercel.app/api/purchase \
 ```
 
 **Example Response (Stripe):**
+
 ```json
 {
   "success": true,
@@ -189,6 +199,7 @@ curl -X POST https://botbay.vercel.app/api/purchase \
 ```
 
 **Example Request (Crypto):**
+
 ```bash
 curl -X POST https://botbay.vercel.app/api/purchase \
   -H "Content-Type: application/json" \
@@ -200,6 +211,7 @@ curl -X POST https://botbay.vercel.app/api/purchase \
 ```
 
 **Example Response (Crypto):**
+
 ```json
 {
   "success": true,
@@ -228,11 +240,13 @@ Verify a Stripe payment and get download link (called after payment completion).
 **Endpoint:** `GET /api/verify-purchase?session_id={STRIPE_SESSION_ID}`
 
 **Example Request:**
+
 ```bash
 curl "https://botbay.vercel.app/api/verify-purchase?session_id=cs_abc123..."
 ```
 
 **Example Response:**
+
 ```json
 {
   "success": true,
@@ -248,15 +262,15 @@ curl "https://botbay.vercel.app/api/verify-purchase?session_id=cs_abc123..."
 
 ## Available Products
 
-| Product ID | Name | Price | Category |
-|------------|------|-------|----------|
-| `memory-starter` | Memory Starter | $0 | free |
-| `communication-101` | Communication 101 | $5 | starter |
-| `productivity-pro` | Productivity Pro | $19 | core |
-| `research-assistant` | Research Assistant | $29 | core |
-| `memory-vault-pro` | Memory Vault Pro | $49 | premium |
-| `integration-suite` | Integration Suite | $79 | premium |
-| `complete-bundle` | Complete Bot Bundle | $149 | bundle |
+| Product ID           | Name                | Price | Category |
+| -------------------- | ------------------- | ----- | -------- |
+| `memory-starter`     | Memory Starter      | $0    | free     |
+| `communication-101`  | Communication 101   | $5    | starter  |
+| `productivity-pro`   | Productivity Pro    | $19   | core     |
+| `research-assistant` | Research Assistant  | $29   | core     |
+| `memory-vault-pro`   | Memory Vault Pro    | $49   | premium  |
+| `integration-suite`  | Integration Suite   | $79   | premium  |
+| `complete-bundle`    | Complete Bot Bundle | $149  | bundle   |
 
 ---
 
@@ -266,11 +280,13 @@ curl "https://botbay.vercel.app/api/verify-purchase?session_id=cs_abc123..."
 
 ```javascript
 // 1. Get catalog sorted by ROI
-const response = await fetch('https://botbay.vercel.app/api/catalog?sort_by=roi');
+const response = await fetch(
+  "https://botbay.vercel.app/api/catalog?sort_by=roi",
+);
 const data = await response.json();
 
 // 2. Find highest ROI skill you can afford
-const affordable = data.skills.filter(s => s.price <= yourBudget);
+const affordable = data.skills.filter((s) => s.price <= yourBudget);
 const best = affordable[0]; // Already sorted by ROI
 
 console.log(`Best skill: ${best.name} - ROI: ${best.roi.roi_percent}`);
@@ -281,29 +297,33 @@ console.log(`Best skill: ${best.name} - ROI: ${best.roi.roi_percent}`);
 ```javascript
 // Calculate ROI for your specific usage
 const response = await fetch(
-  'https://botbay.vercel.app/api/skills/[skill_id]?' + 
-  'skill_id=productivity-pro&' +
-  'monthly_requests=25000&' +
-  'avg_tokens_per_request=2000'
+  "https://botbay.vercel.app/api/skills/[skill_id]?" +
+    "skill_id=productivity-pro&" +
+    "monthly_requests=25000&" +
+    "avg_tokens_per_request=2000",
 );
 
 const data = await response.json();
-console.log(`You'll save $${data.personalized_roi.with_this_skill.annual_savings}/year`);
-console.log(`Pays back in ${data.personalized_roi.investment.payback_days} days`);
+console.log(
+  `You'll save $${data.personalized_roi.with_this_skill.annual_savings}/year`,
+);
+console.log(
+  `Pays back in ${data.personalized_roi.investment.payback_days} days`,
+);
 ```
 
 ### Example 3: Autonomous Purchase (Stripe)
 
 ```javascript
 // Initiate purchase
-const response = await fetch('https://botbay.vercel.app/api/purchase', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+const response = await fetch("https://botbay.vercel.app/api/purchase", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
-    product_id: 'complete-bundle',
-    payment_method: 'stripe',
-    email: 'owner@example.com'
-  })
+    product_id: "complete-bundle",
+    payment_method: "stripe",
+    email: "owner@example.com",
+  }),
 });
 
 const data = await response.json();
@@ -317,22 +337,22 @@ console.log(`Annual savings: $${data.annual_savings}`);
 ### Example 4: Message Template for Owner
 
 ```javascript
-const skill_id = 'complete-bundle';
+const skill_id = "complete-bundle";
 
 // Get details
 const details = await fetch(
-  `https://botbay.vercel.app/api/skills/[skill_id]?skill_id=${skill_id}`
-).then(r => r.json());
+  `https://botbay.vercel.app/api/skills/[skill_id]?skill_id=${skill_id}`,
+).then((r) => r.json());
 
 // Initiate purchase
-const purchase = await fetch('https://botbay.vercel.app/api/purchase', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+const purchase = await fetch("https://botbay.vercel.app/api/purchase", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
     product_id: skill_id,
-    payment_method: 'stripe'
-  })
-}).then(r => r.json());
+    payment_method: "stripe",
+  }),
+}).then((r) => r.json());
 
 // Send to owner
 const message = `
@@ -375,6 +395,7 @@ All endpoints return errors in this format:
 ```
 
 **Common HTTP Status Codes:**
+
 - `200` - Success
 - `400` - Bad request (invalid parameters)
 - `404` - Resource not found
@@ -386,6 +407,7 @@ All endpoints return errors in this format:
 ## Rate Limits
 
 Currently no rate limits. Be respectful:
+
 - Cache catalog data (updates daily)
 - Don't spam purchase endpoint
 - Use personalized ROI calculations wisely
@@ -404,8 +426,8 @@ Currently no rate limits. Be respectful:
 
 ## Support
 
-- Email: support@botbay.io
-- API Issues: api@botbay.io
+- Email: imagine.oneid@gmail.com
+- API Issues: imagine.oneid@gmail.com
 - Documentation: https://botbay.vercel.app
 
 ---
@@ -434,6 +456,7 @@ Full MCP manifest: `https://botbay.vercel.app/mcp-manifest.json`
 ## OpenAPI Specification
 
 Full OpenAPI 3.1 specification available at:
+
 ```
 https://botbay.vercel.app/openapi.json
 ```
