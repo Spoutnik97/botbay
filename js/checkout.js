@@ -20,8 +20,9 @@ function trackEvent(eventName, properties = {}) {
 const PRODUCTS = {
   "communication-101": {
     name: "Communication 101",
-    priceId: "price_1Sws0TQxRQy7QfTarP3oKo5r",
-    productId: "prod_TuhPRvbi1NFVIu",
+    priceId: "price_1SwrqsJFHS1veldMJHgwiRPX",
+    //"price_1Sws0TQxRQy7QfTarP3oKo5r",
+    productId: "prod_TuhFdceI9Rriaf", //prod_TuhPRvbi1NFVIu",
     price: 500, // cents
   },
   "productivity-pro": {
