@@ -139,7 +139,7 @@ export default async function handler(req, res) {
         mode: "payment",
         success_url: `${baseUrl}/success.html?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${baseUrl}/#catalog`,
-        customer_email: email,
+        ...(email && { customer_email: email }), // Only include email if provided
         metadata: {
           product_id,
           bot_id: bot_id || "unknown",

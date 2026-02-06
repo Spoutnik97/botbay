@@ -95,7 +95,7 @@ async function handleCheckout(productId) {
       body: JSON.stringify({
         product_id: productId,
         payment_method: "stripe",
-        email: "", // Optional: can collect email first
+        // Don't send email - Stripe Checkout will collect it
       }),
     });
 
