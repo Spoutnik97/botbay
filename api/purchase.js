@@ -112,6 +112,11 @@ export default async function handler(req, res) {
         });
       }
 
+      // Get the base URL with proper https scheme
+      const baseUrl = process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "https://botbay.vercel.app";
+
       // Create Stripe checkout session
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
@@ -132,8 +137,8 @@ export default async function handler(req, res) {
           },
         ],
         mode: "payment",
-        success_url: `${process.env.VERCEL_URL || "https://botbay.vercel.app"}/success.html?session_id={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${process.env.VERCEL_URL || "https://botbay.vercel.app"}/#catalog`,
+        success_url: `${baseUrl}/success.html?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${baseUrl}/#catalog`,
         customer_email: email,
         metadata: {
           product_id,
