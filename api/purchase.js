@@ -1,7 +1,7 @@
 // Vercel Serverless Function - Purchase API
 // Handles purchase initiation for skill acquisition
 
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+import Stripe from "stripe";
 
 // Product pricing and metadata
 const PRODUCTS = {
@@ -70,6 +70,9 @@ export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
+
+  // Initialize Stripe
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
   try {
     const { product_id, payment_method = "stripe", bot_id, email } = req.body;

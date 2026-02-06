@@ -1,7 +1,7 @@
 // Vercel Serverless Function to verify Stripe payment and deliver skill
 // This runs on the server side, keeping your Stripe secret key secure
 
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+import Stripe from "stripe";
 
 // Map product IDs to skill file paths
 const PRODUCT_SKILLS = {
@@ -28,6 +28,9 @@ export default async function handler(req, res) {
   if (!session_id) {
     return res.status(400).json({ error: "Missing session_id" });
   }
+
+  // Initialize Stripe
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
   try {
     // Retrieve the checkout session from Stripe
