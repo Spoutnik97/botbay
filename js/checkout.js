@@ -57,20 +57,12 @@ const PRODUCTS = {
   },
 };
 
-// Initialize Stripe
-let stripe = null;
-
-function initStripe() {
-  if (
-    typeof Stripe !== "undefined" &&
-    STRIPE_PUBLISHABLE_KEY !== "pk_test_your_stripe_key_here"
-  ) {
-    stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
-  }
-}
+// Note: We use server-side Stripe Checkout via /api/purchase
+// No need to initialize Stripe.js on the client side
+// This simplifies the setup and is more secure
 
 // Handle checkout button clicks
-function handleCheckout(productId) {
+async function handleCheckout(productId) {
   const product = PRODUCTS[productId];
 
   if (!product) {
@@ -90,57 +82,62 @@ function handleCheckout(productId) {
     price: product.price / 100,
   });
 
-  // If Stripe is not configured, show demo mode
-  if (!stripe) {
-    showDemoCheckout(product);
-    return;
-  }
+  // Show loading state
+  showNotification("Creating checkout session...", "info");
 
-  // Check if Price ID is configured
-  if (product.priceId.includes("REPLACE")) {
-    showNotification(
-      "Payment not configured. Please set up Stripe Price IDs in checkout.js",
-      "error",
-    );
-    console.error("Missing Price ID for product:", productId);
-    console.error(
-      "Go to Stripe Dashboard → Products → Click product → Copy the Price ID (starts with price_)",
-    );
-    return;
-  }
-
-  // Redirect to Stripe Checkout
-  stripe
-    .redirectToCheckout({
-      lineItems: [
-        {
-          price: product.priceId,
-          quantity: 1,
-        },
-      ],
-      mode: "payment",
-      // {CHECKOUT_SESSION_ID} is replaced by Stripe with the actual session ID
-      successUrl:
-        window.location.origin +
-        "/success.html?session_id={CHECKOUT_SESSION_ID}&product=" +
-        productId,
-      cancelUrl: window.location.origin + "/index.html#catalog",
-    })
-    .then(function (result) {
-      if (result.error) {
-        showNotification(result.error.message, "error");
-        trackEvent("checkout_error", {
-          productId,
-          productName: product.name,
-          error: result.error.message,
-        });
-      } else {
-        trackEvent("checkout_redirect", {
-          productId,
-          productName: product.name,
-        });
-      }
+  try {
+    // Call our server-side API to create Stripe checkout session
+    const response = await fetch("/api/purchase", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        product_id: productId,
+        payment_method: "stripe",
+        email: "", // Optional: can collect email first
+      }),
     });
+
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new Error(
+        data.error || data.message || "Failed to create checkout session",
+      );
+    }
+
+    // Check if it's a free product
+    if (data.price === 0) {
+      showNotification(data.message, "success");
+      trackEvent("free_product_download", {
+        productId,
+        productName: product.name,
+      });
+      // Redirect to download
+      window.location.href = data.download_url;
+      return;
+    }
+
+    // Redirect to Stripe Checkout URL (server-created session)
+    if (data.checkout_url) {
+      trackEvent("checkout_redirect", {
+        productId,
+        productName: product.name,
+      });
+      window.location.href = data.checkout_url;
+    } else {
+      throw new Error("No checkout URL received");
+    }
+  } catch (error) {
+    console.error("Checkout error:", error);
+    showNotification(error.message || "Failed to start checkout", "error");
+    trackEvent("checkout_error", {
+      productId,
+      productName: product.name,
+      error: error.message,
+    });
+  }
 }
 
 // Demo checkout for when Stripe is not configured
@@ -535,9 +532,6 @@ function animateCounters() {
 
 // Initialize on page load
 document.addEventListener("DOMContentLoaded", function () {
-  // Initialize Stripe
-  initStripe();
-
   // Initialize ROI Calculator
   initROICalculator();
 
