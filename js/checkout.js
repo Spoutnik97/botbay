@@ -1,9 +1,3 @@
-// BotBay Stripe Checkout Integration
-const STRIPE_PUBLISHABLE_KEY =
-  "pk_test_51SwrkFJFHS1veldML8ImesBFPdsEezMz1xdan90ukcvX12dfdDDV2QGiz31XifTS12rLuFuv37K6pcpQgkRmbhfj00RmgLorlH";
-
-// "pk_live_51Swrk5QxRQy7QfTaj7pk9L17rpOV2fvJltSNQPXEu08h2e4c52LQvj1CJV1nNd9XiRtcb9pCytW5IBE1i8brsQdE00kiJKaiOj";
-
 // Vercel Analytics helper
 function trackEvent(eventName, properties = {}) {
   if (window.va) {

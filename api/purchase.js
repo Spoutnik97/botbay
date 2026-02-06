@@ -52,9 +52,9 @@ const PRODUCTS = {
 
 // Crypto payment addresses (for autonomous purchases)
 const CRYPTO_ADDRESSES = {
-  usdc: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
-  eth: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
-  usdt: "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+  usdc: "0x3fd32ad2297bC2980b5C3d9472a70063fcd34E22",
+  eth: "0x3fd32ad2297bC2980b5C3d9472a70063fcd34E22",
+  btc: "3BqRu1kZhw9tTXhhbrKksUzq8ZBkYuUvYE",
 };
 
 export default async function handler(req, res) {
