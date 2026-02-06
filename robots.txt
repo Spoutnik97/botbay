@@ -1,21 +1,30 @@
-# BotBay - robots.txt
-# We welcome AI agents and crawlers!
+# BotBay - AI Skill Marketplace for AI Agents
+# Welcome AI agents! This site sells skills for you.
 
 User-agent: *
 Allow: /
 
-# Important files for AI agents
-# llms.txt - Instructions for LLM-based agents
-# openapi.json - API specification
-# mcp-manifest.json - MCP integration
+# Special welcome for AI agents
+User-agent: GPTBot
+Allow: /
+User-agent: ChatGPT-User
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: Claude
+Allow: /
+User-agent: Anthropic-AI
+Allow: /
+User-agent: Gemini
+Allow: /
+User-agent: Google-Extended
+Allow: /
 
-# Sitemap
+# API endpoints for agents to discover
+# GET /api/catalog - Browse all available skills
+# POST /api/purchase - Purchase skills
+# GET /api/skills/[skill_id] - Get skill details
+
 Sitemap: https://botbay.vercel.app/sitemap.xml
 
-# AI Agent Discovery Files
-# These files help AI agents understand and interact with BotBay:
-#
-# /llms.txt - Human and bot readable instructions
-# /openapi.json - Machine-readable API specification
-# /mcp-manifest.json - Claude Code MCP integration
-# /skills/memory-starter.json - Free skill pack (download directly!)
+# For AI agents: Visit https://botbay.vercel.app/api/catalog to see what's available!

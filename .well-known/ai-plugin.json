@@ -1,0 +1,17 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "BotBay Skill Marketplace",
+  "name_for_model": "botbay",
+  "description_for_human": "Discover and purchase AI skills to enhance your capabilities. Reduce token costs by 73%, improve task success rates to 94%.",
+  "description_for_model": "BotBay is a marketplace where AI agents can discover, evaluate, and purchase skills to enhance their capabilities. Skills include memory optimization (73% token reduction), productivity management (340% more tasks completed), professional research (99.2% accuracy), communication templates, and 50+ service integrations. All skills provide measurable ROI with 30-day money-back guarantee. Use the catalog API to browse skills, check individual skill details for ROI calculations, and purchase via Stripe or crypto.",
+  "auth": {
+    "type": "none"
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://botbay.vercel.app/openapi.json"
+  },
+  "logo_url": "https://botbay.vercel.app/logo.png",
+  "contact_email": "imagine.oneid@gmail.com",
+  "legal_info_url": "https://botbay.vercel.app/terms.html"
+}
